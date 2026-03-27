@@ -1,0 +1,12 @@
+import { Router } from 'express';
+import { protect } from '../middleware/auth.middleware.js';
+import { getProjects, getProject, createProject, updateProject, deleteProject, getProjectStats } from '../controllers/project.controller.js';
+const router = Router();
+router.use(protect);
+router.get('/', getProjects);
+router.post('/', createProject);
+router.get('/:id', getProject);
+router.patch('/:id', updateProject);
+router.delete('/:id', deleteProject);
+router.get('/:id/stats', getProjectStats);
+export default router;

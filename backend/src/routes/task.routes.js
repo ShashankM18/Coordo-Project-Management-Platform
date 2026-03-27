@@ -1,0 +1,17 @@
+import { Router } from 'express';
+import { protect } from '../middleware/auth.middleware.js';
+import { getTasks, getMyTasks, getTask, createTask, updateTask, updateTaskDependencies, updateTaskStatus, reorderTasks, deleteTask, addComment, deleteComment } from '../controllers/task.controller.js';
+const router = Router();
+router.use(protect);
+router.get('/', getTasks);
+router.get('/my-tasks', getMyTasks);
+router.post('/', createTask);
+router.patch('/reorder', reorderTasks);
+router.get('/:id', getTask);
+router.patch('/:id', updateTask);
+router.patch('/:id/dependencies', updateTaskDependencies);
+router.patch('/:id/status', updateTaskStatus);
+router.delete('/:id', deleteTask);
+router.post('/:id/comments', addComment);
+router.delete('/:id/comments/:commentId', deleteComment);
+export default router;
