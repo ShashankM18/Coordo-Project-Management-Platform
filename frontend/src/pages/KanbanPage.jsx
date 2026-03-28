@@ -186,12 +186,12 @@ export default function KanbanPage() {
             ))}
           </select>
           <ProjectHealthWidget projectId={projectId} />
-          <button
+          {/* <button
             onClick={() => setShowBlockedOnly((value) => !value)}
             className={`btn-secondary text-xs gap-1.5 py-1.5 ${showBlockedOnly ? 'bg-red-50 text-red-700 border-red-200' : ''}`}
           >
             <Link2 size={12} /> {showBlockedOnly ? 'Blocked Only' : 'Show Blocked'}
-          </button>
+          </button> */}
           <button
             onClick={() => setShowNLP(true)}
             className="btn-secondary text-xs gap-1.5 py-1.5"
