@@ -1,7 +1,8 @@
 import axios from 'axios';
+import { BASE_URL } from '../config/api';
 
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: BASE_URL,
   timeout: 15000,
   headers: { 'Content-Type': 'application/json' },
 });
@@ -42,7 +43,7 @@ api.interceptors.response.use(
         const refreshToken = auth?.state?.refreshToken || auth?.refreshToken;
         if (!refreshToken) throw new Error('No refresh token');
 
-        const { data } = await axios.post('/api/auth/refresh', { refreshToken });
+        const { data } = await axios.post(`${BASE_URL}/auth/refresh`, { refreshToken });
         // Update persisted auth to keep tokens in sync with store on reload
         const current = getPersistedAuth() || {};
         const next = {

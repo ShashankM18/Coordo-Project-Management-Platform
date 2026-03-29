@@ -27,8 +27,6 @@ import sprintRoutes from './routes/sprint.routes.js';
 import meetingRoutes from './routes/meeting.routes.js';
 
 import { errorHandler, notFound } from './middleware/error.middleware.js';
-import dotenv from 'dotenv';
-dotenv.config();
 
 const app = express();
 const httpServer = http.createServer(app);

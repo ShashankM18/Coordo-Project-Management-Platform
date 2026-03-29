@@ -4,6 +4,7 @@ import { useAuthStore } from '@store/auth.store';
 import { useTaskStore } from '@store/task.store';
 import { useNotificationStore } from '@store/notification.store';
 import toast from 'react-hot-toast';
+import { SOCKET_URL } from '../config/api';
 
 let socketInstance = null;
 
@@ -15,7 +16,7 @@ export const useSocket = () => {
     if (!isAuthenticated || !token) return;
 
     if (!socketInstance) {
-      socketInstance = io('/', {
+      socketInstance = io(SOCKET_URL, {
         auth: { token },
         transports: ['websocket', 'polling'],
         reconnectionAttempts: 5,

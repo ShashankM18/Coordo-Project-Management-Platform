@@ -6,7 +6,9 @@ import Project from '../models/Project.model.js';
 import Task from '../models/Task.model.js';
 
 async function reset() {
-  await mongoose.connect(process.env.MONGODB_URI);
+  const uri = process.env.MONGO_URI || process.env.MONGODB_URI;
+  if (!uri) throw new Error('MONGO_URI or MONGODB_URI missing');
+  await mongoose.connect(uri);
   const user = await User.findOne({ email: 'demo@coordo.app' });
   if (!user) { console.log('No demo data found.'); process.exit(0); }
 
