@@ -31,10 +31,13 @@ import { errorHandler, notFound } from './middleware/error.middleware.js';
 const app = express();
 const httpServer = http.createServer(app);
 
+const clientUrlStr = process.env.CLIENT_URL || 'http://localhost:5173';
+const allowedOrigins = clientUrlStr.split(',').map(url => url.trim());
+
 // --- Security & Parsing Middleware ---
 app.use(helmet());
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  origin: allowedOrigins,
   credentials: true,
 }));
 app.use(express.json({ limit: '10mb' }));
@@ -57,7 +60,7 @@ app.use('/api/', limiter);
 // --- Socket.io Setup ---
 const io = new Server(httpServer, {
   cors: {
-    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+    origin: allowedOrigins,
     methods: ['GET', 'POST'],
     credentials: true,
   },
