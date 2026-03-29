@@ -9,7 +9,8 @@
     "start": "node src/server.js",
     "lint": "eslint src/",
     "seed": "node src/scripts/seed.js",
-    "seed:reset": "node src/scripts/resetSeed.js"
+    "seed:reset": "node src/scripts/resetSeed.js",
+    "build": "npm install --legacy-peer-deps"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.27.0",
