@@ -106,7 +106,8 @@ export const inviteMember = async (req, res, next) => {
     workspace.pendingInvites.push({ email: email.toLowerCase(), token, role, expiresAt, invitedBy: req.user._id });
     await workspace.save();
 
-    const inviteUrl = `${process.env.CLIENT_URL}/invite/${token}`;
+    const clientUrl = req.headers.origin || process.env.CLIENT_URL;
+    const inviteUrl = `${clientUrl}/invite/${token}`;
     
     // TEMPORARY: Print the invite link to the backend console so you can click it
     // since emails won't send without correct SMTP settings in the .env file

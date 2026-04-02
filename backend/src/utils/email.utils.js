@@ -19,6 +19,18 @@ const createTransporter = async () => {
     });
   }
 
+  // If using Gmail, use the native service parameter instead of raw host/port
+  // This heavily reduces the chance of Google blocking the connection from a cloud server
+  if (process.env.EMAIL_HOST && process.env.EMAIL_HOST.includes('gmail')) {
+    return nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+  }
+
   return nodemailer.createTransport({
     host: process.env.EMAIL_HOST,
     port: Number(process.env.EMAIL_PORT) || 587,
