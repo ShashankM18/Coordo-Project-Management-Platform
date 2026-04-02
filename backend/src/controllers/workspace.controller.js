@@ -115,22 +115,9 @@ export const inviteMember = async (req, res, next) => {
     // since emails won't send without correct SMTP settings in the .env file
     console.log(`\n=== INVITE LINK FOR ${email} ===\n${inviteUrl}\n=================================\n`);
     
-    try {
-      await sendWorkspaceInviteEmail({
-        to: email, inviterName: req.user.name, workspaceName: workspace.name, inviteUrl
-      });
-    } catch (emailError) {
-      console.error('❌ Failed to send invite email:', emailError);
-      
-      // We must delete the pending invite we just created because the email failed to send!
-      workspace.pendingInvites = workspace.pendingInvites.filter(i => i.email !== email.toLowerCase());
-      await workspace.save();
-
-      return res.status(500).json({ 
-        success: false, 
-        message: 'Could not send email! Check your SMTP App Password and Environment Variables.' 
-      });
-    }
+    sendWorkspaceInviteEmail({
+      to: email, inviterName: req.user.name, workspaceName: workspace.name, inviteUrl
+    }).catch(console.error);
 
     logActivity({ actor: req.user._id, action: 'workspace_member_invited', workspace: workspace._id,
       description: `Invited ${email} to workspace` });
