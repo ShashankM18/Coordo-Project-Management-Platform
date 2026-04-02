@@ -28,7 +28,7 @@ export const register = async (req, res, next) => {
     });
 
     // Send welcome email (non-blocking)
-    sendWelcomeEmail(user).catch(console.error);
+    await sendWelcomeEmail(user).catch(console.error);
 
     res.status(201).json({
       success: true,
