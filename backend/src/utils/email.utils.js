@@ -1,46 +1,6 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 
-let testAccount = null;
-
-const createTransporter = async () => {
-  // Use a free temporary inbox (Ethereal) if you don't have .env SMTP configured
-  if (!process.env.EMAIL_HOST) {
-    if (!testAccount) {
-      testAccount = await nodemailer.createTestAccount();
-    }
-    return nodemailer.createTransport({
-      host: 'smtp.ethereal.email',
-      port: 587,
-      secure: false,
-      auth: {
-        user: testAccount.user,
-        pass: testAccount.pass,
-      },
-    });
-  }
-
-  // If using Gmail, use the native service parameter instead of raw host/port
-  // This heavily reduces the chance of Google blocking the connection from a cloud server
-  if (process.env.EMAIL_HOST && process.env.EMAIL_HOST.includes('gmail')) {
-    return nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
-  }
-
-  return nodemailer.createTransport({
-    host: process.env.EMAIL_HOST,
-    port: Number(process.env.EMAIL_PORT) || 587,
-    secure: Number(process.env.EMAIL_PORT) === 465,
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-  });
-};
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const baseTemplate = (content) => `
 <!DOCTYPE html>
@@ -72,20 +32,25 @@ const baseTemplate = (content) => `
 </html>`;
 
 export const sendEmail = async ({ to, subject, html }) => {
-  const transporter = await createTransporter();
-  const info = await transporter.sendMail({
-    from: process.env.EMAIL_FROM || '"Coordo" <noreply@coordo.app>',
-    to,
-    subject,
-    html,
-  });
-  
-  // If we are using the free Ethereal test inbox, print the URL to view the email!
-  if (!process.env.EMAIL_HOST) {
-    console.log(`\n================= 📧 MOCK EMAIL SENT =================`);
-    console.log(`View the actual email visually in your browser here:`);
-    console.log(nodemailer.getTestMessageUrl(info));
-    console.log(`========================================================\n`);
+  if (!process.env.RESEND_API_KEY) {
+    console.warn('\\n⚠️  RESEND_API_KEY is not set. Email not sent, printing to console instead:');
+    console.warn(`To: ${to}\\nSubject: ${subject}\\n`);
+    return;
+  }
+
+  try {
+    const { data, error } = await resend.emails.send({
+      from: process.env.EMAIL_FROM || 'Coordo <onboarding@resend.dev>',
+      to,
+      subject,
+      html,
+    });
+
+    if (error) {
+      console.error('Resend error:', error);
+    }
+  } catch (err) {
+    console.error('Failed to send email via Resend:', err);
   }
 };
 

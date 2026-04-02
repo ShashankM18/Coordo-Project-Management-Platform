@@ -113,7 +113,7 @@ export const inviteMember = async (req, res, next) => {
     // since emails won't send without correct SMTP settings in the .env file
     console.log(`\n=== INVITE LINK FOR ${email} ===\n${inviteUrl}\n=================================\n`);
     
-    await sendWorkspaceInviteEmail({
+    sendWorkspaceInviteEmail({
       to: email, inviterName: req.user.name, workspaceName: workspace.name, inviteUrl
     }).catch(console.error);
 
