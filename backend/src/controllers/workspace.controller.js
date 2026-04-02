@@ -112,9 +112,14 @@ export const inviteMember = async (req, res, next) => {
     // since emails won't send without correct SMTP settings in the .env file
     console.log(`\n=== INVITE LINK FOR ${email} ===\n${inviteUrl}\n=================================\n`);
     
-    sendWorkspaceInviteEmail({
-      to: email, inviterName: req.user.name, workspaceName: workspace.name, inviteUrl
-    }).catch(console.error);
+    try {
+      await sendWorkspaceInviteEmail({
+        to: email, inviterName: req.user.name, workspaceName: workspace.name, inviteUrl
+      });
+    } catch (emailError) {
+      console.error('❌ Failed to send invite email:', emailError);
+      // We will still proceed, but the admin will see this in the server logs
+    }
 
     logActivity({ actor: req.user._id, action: 'workspace_member_invited', workspace: workspace._id,
       description: `Invited ${email} to workspace` });
