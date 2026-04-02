@@ -121,7 +121,15 @@ export const inviteMember = async (req, res, next) => {
       });
     } catch (emailError) {
       console.error('❌ Failed to send invite email:', emailError);
-      // We will still proceed, but the admin will see this in the server logs
+      
+      // We must delete the pending invite we just created because the email failed to send!
+      workspace.pendingInvites = workspace.pendingInvites.filter(i => i.email !== email.toLowerCase());
+      await workspace.save();
+
+      return res.status(500).json({ 
+        success: false, 
+        message: 'Could not send email! Check your SMTP App Password and Environment Variables.' 
+      });
     }
 
     logActivity({ actor: req.user._id, action: 'workspace_member_invited', workspace: workspace._id,
